@@ -34,7 +34,7 @@ class App extends React.Component<Props, GameState> {
     /**
      * state has type GameState as specified in the class inheritance.
      */
-    this.state = { cells: [] }
+    this.state = { cells: [], player: 0, winner: -1 }
   }
 
   /**
@@ -45,7 +45,12 @@ class App extends React.Component<Props, GameState> {
   newGame = async () => {
     const response = await fetch('/newgame');
     const json = await response.json();
-    this.setState({ cells: json['cells'] });
+    this.setState({ cells: json['cells'], player: json['player'], winner: json['winner'] });
+    // const player = await fetch('/getplayer')
+    // console.log(player)
+    // fetch('/getplayer')
+    //   .then((response) => response.text())
+    //   .then((player) => this.setState({player: player}))
   }
 
   /**
@@ -61,8 +66,14 @@ class App extends React.Component<Props, GameState> {
       e.preventDefault();
       const response = await fetch(`/play?x=${x}&y=${y}`)
       const json = await response.json();
-      this.setState({ cells: json['cells'] });
+      this.setState({ cells: json['cells'], player: json['player'], winner: json['winner'] });
     }
+  }
+
+  undo = () => {
+    fetch('/undo')
+      .then((response) => response.json())
+      .then((json) => this.setState({ cells: json['cells'], player: json['player'], winner: json['winner'] }))
   }
 
   createCell(cell: Cell, index: number): React.ReactNode {
@@ -115,13 +126,16 @@ class App extends React.Component<Props, GameState> {
      */
     return (
       <div>
+        <div id="instructions">
+          {this.state.winner === -1 ? `current player: Player ${this.state.player} ` : `winner: Player ${this.state.winner}`}
+        </div>
         <div id="board">
           {this.state.cells.map((cell, i) => this.createCell(cell, i))}
         </div>
         <div id="bottombar">
           <button onClick={/* get the function, not call the function */this.newGame}>New Game</button>
           {/* Exercise: implement Undo function */}
-          <button>Undo</button>
+          <button onClick={this.undo}>Undo</button>
         </div>
       </div>
     );

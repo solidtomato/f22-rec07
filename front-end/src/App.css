@@ -1,7 +1,7 @@
 #board {
   display: grid;
   grid-template-columns: auto auto auto;
-  background-color: #2196F3;
+  background-color: #963838;
   padding: 10px
 }
 
@@ -44,4 +44,4 @@ body {
   padding: 0;
 }
 
-.playable { background-color: red;}
+.playable { background-color: rgb(255,183,197);}
